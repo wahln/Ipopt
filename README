@@ -1,3 +1,4 @@
+This is a forked IPOPT repository aiming at providing an Open-Source no-fortran possibility to build IPOPT using CLAPACK, OpenBLAS and a custom solver using the Eigen template library.
 
 To install this package, please look at the INSTALL file. 
 
