@@ -111,21 +111,34 @@ if(IPOPT_HAS_EIGEN)
 	ExternalProject_Get_Property(Eigen SOURCE_DIR)
 	# message("Source dir of Eigen: ${SOURCE_DIR}")
     set(Eigen_DIR ${SOURCE_DIR} CACHE PATH "Path to Eigen template library")
-	mark_as_advanced(Eigen_DIR)
-    # mitkFunctionInstallExternalCMakeProject(${proj})
-	
-	ExternalProject_Get_Property(Eigen INSTALL_DIR)
+
+	# ExternalProject_Get_Property(Eigen INSTALL_DIR)
 	# message(STATUS "Eigen Install dir: ${INSTALL_DIR}")
 	
 
   else()
-
-    # mitkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
+	ExternalProject_Add(Eigen
+	  SOURCE_DIR ${Eigen_DIR}	
+	  INSTALL_DIR ${THIRDPARTY_DIR}/
+	  BINARY_DIR ${THIRDPARTY_DIR}/src/Eigen-build
+      CMAKE_ARGS
+ #       ${ep_common_args}
+        -DBUILD_TESTING:BOOL=ON
+        -DEIGEN_BUILD_PKGCONFIG:BOOL=OFF
+      CMAKE_CACHE_ARGS
+	  	-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+		-DBLAS_openblas_LIBRARY:FILEPATH=${IPOPT_BLAS_LIBRARY}
+ #       ${ep_common_cache_args}
+#      CMAKE_CACHE_DEFAULT_ARGS
+ #       ${ep_common_cache_default_args}
+	  DEPENDS OpenBLAS
+    )
 
   endif()
-
+  mark_as_advanced(Eigen_DIR)
   list (APPEND IPOPT_DEPENDS Eigen)
 endif()
+
 
 #-----------------------------------------------------------------------------
 # OpenMP

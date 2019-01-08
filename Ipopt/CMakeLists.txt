@@ -281,6 +281,84 @@ set (IPOPT_SRC_LIST ${IPOPT_SRC_ALGORITHM_LIST}
                     ${IPOPT_SRC_INTERFACES_LIST}
                     ${IPOPT_SRC_LINALG_LIST}
                     ${IPOPT_SRC_LINALG_TMATRICES})
+					
+set(LINALG_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpMatrix.hpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpSymMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpExpansionMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpVector.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpDenseVector.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpCompoundVector.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpCompoundMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpCompoundSymMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpSumSymMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpDiagMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpIdentityMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpScaledMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpSymScaledMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpZeroSymMatrix.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpBlas.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/IpLapack.hpp)
+
+set(TMATRICES_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/TMatrices/IpGenTMatrix.hpp
+	           ${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/TMatrices/IpSymTMatrix.hpp
+	           ${CMAKE_CURRENT_SOURCE_DIR}/src/LinAlg/TMatrices/IpTripletHelper.hpp)
+
+set(INTERFACES_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpAlgTypes.hpp
+	            ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpIpoptApplication.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpNLP.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpReturnCodes.h
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpReturnCodes.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpReturnCodes_inc.h
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpReturnCodes.inc
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpSolveStatistics.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpStdCInterface.h
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpTNLP.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpTNLPAdapter.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interfaces/IpTNLPReducer.hpp)
+
+set(COMMON_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpCachedResults.hpp
+	        ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpDebug.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpException.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpJournalist.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpObserver.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpOptionsList.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpReferenced.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpRegOptions.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpSmartPtr.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTaggedObject.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTimedTask.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTypes.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpUtils.hpp)
+
+set(ALGORITHMS_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptCalculatedQuantities.hpp
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptData.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIteratesVector.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpTimingStatistics.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptNLP.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpOrigIpoptNLP.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpNLPScaling.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpAlgBuilder.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptAlg.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpAlgStrategy.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpSearchDirCalculator.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpLineSearch.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpMuUpdate.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpConvCheck.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIterateInitializer.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIterationOutput.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpHessianUpdater.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpEqMultCalculator.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpAugSystemSolver.hpp
+		    ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpPDSystemSolver.hpp)
+
+set(LINEARSOLVERS_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/LinearSolvers/IpSymLinearSolver.hpp)
+
+set(ALL_HDRS ${LINALG_HDRS}
+             ${TMATRICES_HDRS}
+	     ${INTERFACES_HDRS}
+	     ${COMMON_HDRS}
+	     ${ALGORITHMS_HDRS}
+	     ${LINEARSOLVERS_HDRS})
 
 if (IPOPT_ENABLE_INEXACT)
   set(IPOPT_SRC_LIST ${IPOPT_SRC_LIST}
@@ -318,68 +396,67 @@ if (WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif ()
 
+set (IPOPT_LIB ${CMAKE_LIBRARY_PREFIX}ipopt)
 
 if (ENABLE_SHARED_LIBRARIES)
-  add_library(libIpopt SHARED ${IPOPT_SRC_LIST})
+  add_library(${IPOPT_LIB} SHARED ${IPOPT_SRC_LIST} ${ALL_HDRS})
 else ()
-  add_library(libIpopt STATIC ${IPOPT_SRC_LIST})
+  add_library(${IPOPT_LIB} STATIC ${IPOPT_SRC_LIST} ${ALL_HDRS})
 endif ()
 if (COIN_COMPILE_LTO)
-  set_target_properties(libIpopt PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
+  set_target_properties(${IPOPT_LIB} PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
 endif ()
 if (NOT WIN32)
-  set_target_properties(libIpopt PROPERTIES PREFIX "")
+  set_target_properties(${IPOPT_LIB} PROPERTIES PREFIX "")
 endif ()
-set_include_directories(libIpopt)
+set_include_directories(${IPOPT_LIB})
 
-add_dependencies(libIpopt ${IPOPT_DEPENDS})
+add_dependencies(${IPOPT_LIB} ${IPOPT_DEPENDS})
 message(STATUS "Ipopt depends on ${IPOPT_DEPENDS}")
-target_link_libraries(libIpopt ${IPOPT_LAPACK_LIBRARY} ${IPOPT_BLAS_LIBRARY})
-
-
+target_link_libraries(${IPOPT_LIB} ${IPOPT_LAPACK_LIBRARY} ${IPOPT_BLAS_LIBRARY})
 
 if (IPOPT_HAS_AMPL)
   set (IPOPT_AMPL_SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Apps/AmplSolver/ampl_ipopt.cpp
                            ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Apps/AmplSolver/AmplTNLP.cpp)
   
-  add_executable(ipopt ${IPOPT_AMPL_SRC_LIST})
+  add_executable(ipoptampl ${IPOPT_AMPL_SRC_LIST})
   
-  target_link_libraries(ipopt libIpopt)
+  target_link_libraries(ipoptampl ${IPOPT_LIB})
   if (COIN_HAS_MUMPS)
-    target_link_libraries(ipopt dmumps mumps_common seq pthread)
+    target_link_libraries(ipoptampl dmumps mumps_common seq pthread)
   endif ()
   if (MKL_FOUND)
     target_link_libraries(${Name} ${COIN_MKL_LIBS})
   else ()
     if (COIN_HAS_LAPACK OR COIN_ENABLE_DOWNLOAD_LAPACK)
-      target_link_libraries(ipopt lapack)
+      target_link_libraries(ipoptampl lapack)
     endif ()
     if (COIN_HAS_BLAS OR COIN_ENABLE_DOWNLOAD_BLAS)
-      target_link_libraries(ipopt blas)
+      target_link_libraries(ipoptampl blas)
     endif ()
     if (COIN_ENABLE_DOWNLOAD_CLAPACK)
-      target_link_libraries(ipopt f2c)
+      target_link_libraries(ipoptampl f2c)
     endif ()
     if (COIN_ENABLE_COMPILE_HSL OR COIN_ENABLE_DOWNLOAD_LAPACK OR COIN_ENABLE_DOWNLOAD_CLAPACK OR COIN_HAS_MUMPS)
-      target_link_libraries(ipopt gfortran)
+      target_link_libraries(ipoptampl gfortran)
     endif ()
   endif ()
   if (COIN_ENABLE_COMPILE_HSL)
-    target_link_libraries(ipopt hsl)
+    target_link_libraries(ipoptampl hsl)
   endif ()
   if (BUILD_LINEARSOLVERLOADER AND UNIX)
-    target_link_libraries(ipopt dl)
+    target_link_libraries(ipoptampl dl)
   endif ()
   if (COIN_ENABLE_DOWNLOAD_ASL)
-    target_link_libraries(ipopt amplsolver)
+    target_link_libraries(ipoptampl amplsolver)
   endif ()
   if (COIN_ENABLE_DOWNLOAD_METIS)
-    target_link_libraries(ipopt metis)
+    target_link_libraries(ipoptampl metis)
   endif ()
   
-  set_include_directories(ipopt)
+  set_include_directories(ipoptampl)
   
-  install(TARGETS ipopt
+  install(TARGETS ipoptampl
           DESTINATION bin)
 endif ()
 
@@ -403,7 +480,7 @@ if (IPOPT_BUILD_EXAMPLES)
                             ${CMAKE_CURRENT_SOURCE_DIR}/examples/ScalableProblems/solve_problem.cpp)
     
   add_executable(solve_problem ${ScalableProblems_SRCS})
-  target_link_libraries(solve_problem libIpopt)
+  target_link_libraries(solve_problem ${IPOPT_LIB})
   if (COIN_COMPILE_LTO)
     set_target_properties(solve_problem PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
   endif ()
@@ -639,7 +716,7 @@ if (IPOPT_BUILD_EXAMPLES)
                        ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/MyNLP.cpp)
   
   add_executable(cpp_example ${Cpp_example_SRCS})
-  target_link_libraries(cpp_example libIpopt)
+  target_link_libraries(cpp_example ${IPOPT_LIB})
   if (COIN_COMPILE_LTO)
     set_target_properties(cpp_example PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
   endif ()
@@ -679,7 +756,7 @@ if (IPOPT_BUILD_EXAMPLES)
   set(hs071_c_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/hs071_c/hs071_c.c)
   
   add_executable(hs071_c ${hs071_c_SRCS})
-  target_link_libraries(hs071_c libIpopt)
+  target_link_libraries(hs071_c ${IPOPT_LIB})
   if (COIN_COMPILE_LTO)
     set_target_properties(hs071_c PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
   endif ()
@@ -720,7 +797,7 @@ if (IPOPT_BUILD_EXAMPLES)
                      ${CMAKE_CURRENT_SOURCE_DIR}/examples/hs071_cpp/hs071_nlp.cpp)
   
   add_executable(hs071_cpp ${hs071_cpp_SRCS})
-  target_link_libraries(hs071_cpp libIpopt)
+  target_link_libraries(hs071_cpp ${IPOPT_LIB})
   if (COIN_COMPILE_LTO)
     set_target_properties(hs071_cpp PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
   endif ()
@@ -770,7 +847,7 @@ if (IPOPT_BUILD_EXAMPLES)
     set(hs071_f_SRCS ${CMAKE_BINARY_DIR}/hs071_f.f)
     
     add_executable(hs071_f ${hs071_f_SRCS})
-    target_link_libraries(hs071_f libIpopt)
+    target_link_libraries(hs071_f ${IPOPT_LIB})
     if (COIN_COMPILE_LTO)
       set_target_properties(hs071_f PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
     endif ()
@@ -806,93 +883,16 @@ if (IPOPT_BUILD_EXAMPLES)
     set_tests_properties(ipopt_example_hs071_f PROPERTIES PASS_REGULAR_EXPRESSION "EXIT: Optimal Solution Found.")
   endif ()
 endif ()
-
 #
 # Install part
 #
 
-set(LINALG_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpMatrix.hpp
-                ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpSymMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpExpansionMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpVector.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpDenseVector.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpCompoundVector.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpCompoundMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpCompoundSymMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpSumSymMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpDiagMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpIdentityMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpScaledMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpSymScaledMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpZeroSymMatrix.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpBlas.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/IpLapack.hpp)
 
-set(TMATRICES_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/TMatrices/IpGenTMatrix.hpp
-	           ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/TMatrices/IpSymTMatrix.hpp
-	           ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/LinAlg/TMatrices/IpTripletHelper.hpp)
-
-set(INTERFACES_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpAlgTypes.hpp
-	            ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpIpoptApplication.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpNLP.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpReturnCodes.h
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpReturnCodes.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpReturnCodes_inc.h
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpReturnCodes.inc
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpSolveStatistics.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpStdCInterface.h
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpTNLP.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpTNLPAdapter.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Interfaces/IpTNLPReducer.hpp)
-
-set(COMMON_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpCachedResults.hpp
-	        ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpDebug.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpException.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpJournalist.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpObserver.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpOptionsList.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpReferenced.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpRegOptions.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpSmartPtr.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpTaggedObject.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpTimedTask.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpTypes.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Common/IpUtils.hpp)
-
-set(ALGORITHMS_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIpoptCalculatedQuantities.hpp
-                    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIpoptData.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIteratesVector.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpTimingStatistics.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIpoptNLP.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpOrigIpoptNLP.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpNLPScaling.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpAlgBuilder.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIpoptAlg.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpAlgStrategy.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpSearchDirCalculator.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpLineSearch.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpMuUpdate.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpConvCheck.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIterateInitializer.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpIterationOutput.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpHessianUpdater.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpEqMultCalculator.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpAugSystemSolver.hpp
-		    ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/IpPDSystemSolver.hpp)
-
-set(LINEARSOLVERS_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Algorithm/LinearSolvers/IpSymLinearSolver.hpp)
-
-set(ALL_HDRS ${LINALG_HDRS}
-             ${TMATRICES_HDRS}
-	     ${INTERFACES_HDRS}
-	     ${COMMON_HDRS}
-	     ${ALGORITHMS_HDRS}
-	     ${LINEARSOLVERS_HDRS})
 
 install(FILES ${ALL_HDRS} 
         DESTINATION include/coin)
 
-install(TARGETS libIpopt
+install(TARGETS ${IPOPT_LIB}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static)
