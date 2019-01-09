@@ -3,7 +3,7 @@
 // This code is published under the Eclipse Public License.
 
 
-#ifndef __IPEIGENSIMPLICIALSOLVERINTERFACE_HPP__
+#ifndef __IPEIGENSIMPLICIALSOLVERINTERFACE_HPP__ 
 #define __IPEIGENSIMPLICIALSOLVERINTERFACE_HPP__
 
 #include "IpSparseSymLinearSolverInterface.hpp"

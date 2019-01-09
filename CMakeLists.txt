@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 project(IpOpt)
 
@@ -11,6 +11,7 @@ option(IPOPT_USE_CLAPACK				"Use CLAPACK" ON)
 #Third Party
 include(ExternalProject)
 set(THIRDPARTY_DIR ${CMAKE_BINARY_DIR}/ThirdParty)
+set(CMAKE_MSVCIDE_RUN_PATH  "${THIRDPARTY_DIR}/bin")
 
 #-----------------------------------------------------------------------------
 # OpenBLAS
@@ -18,27 +19,41 @@ set(THIRDPARTY_DIR ${CMAKE_BINARY_DIR}/ThirdParty)
 
 set(IPOPT_DEPENDS )
 
+# set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs with openBLAS")
+
+
+
 # Sanity checks
 if(IPOPT_USE_OPENBLAS)
 	if(DEFINED OpenBLAS_DIR AND NOT EXISTS ${OpenBLAS_DIR})
 		message(FATAL_ERROR "OpenBLAS_DIR variable is defined but corresponds to non-existing directory")
 	endif()
+	
+#	find_package(Git)
+#	if(NOT GIT_FOUND)
+#		message(FATAL_ERROR "OpenBLAS requires Git")
+#	endif()
 
   if(NOT DEFINED OpenBLAS_DIR)
 
     ExternalProject_Add(OpenBLAS
-      LIST_SEPARATOR ${sep}
-      URL https://github.com/xianyi/OpenBLAS/archive/v0.3.4.tar.gz
-	  URL_MD5 E4D940C2983C547DA212BEE6A491589E
-	  PREFIX ${THIRDPARTY_DIR}/
-	  CMAKE_CACHE_ARGS 
-		-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-	    -DBUILD_SHARED_LIBS:BOOL=OFF
+		LIST_SEPARATOR ${sep}
+      	URL https://github.com/xianyi/OpenBLAS/archive/v0.3.5.tar.gz
+ 	   	URL_MD5 579BDA57F68EA6E9074BF5780E8620BB
+#		GIT_REPOSITORY https://github.com/wahln/OpenBLAS.git
+#		GIT_TAG 3ff64abbc8faef52006f5f19d5615c5e677fffa2
+#		GIT_SHALLOW	ON
+		PREFIX ${THIRDPARTY_DIR}/
+		CMAKE_CACHE_ARGS 
+			-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+#			-DBUILD_SHARED_LIBS:BOOL=OFF
+			-DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 	  )
 
     # set(Eigen_DIR ${ep_prefix})
     # mitkFunctionInstallExternalCMakeProject(${proj})
 	list(APPEND IPOPT_DEPENDS OpenBLAS)
+	
   else()
 
     # mitkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
@@ -171,6 +186,5 @@ endif()
 # endif()
 
 
-
-
 subdirs(Ipopt)
+

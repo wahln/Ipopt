@@ -16,7 +16,7 @@ mark_as_advanced(IPOPT_VERSION_MAJOR
 set(COIN_IPOPT_CHECKLEVEL 0 CACHE STRING "The Debug sanity check level (0 is no test)")
 set(COIN_IPOPT_VERBOSITY 0 CACHE STRING "The Debug verbosity level (0 is no output)")
 
-option(ENABLE_SHARED_LIBRARIES "Build shared library" ON)
+option(ENABLE_SHARED_LIBRARIES "Build shared library" OFF)
 
 mark_as_advanced(COIN_IPOPT_CHECKLEVEL COIN_IPOPT_VERBOSITY)
 
@@ -83,7 +83,15 @@ CHECK_INCLUDE_FILE("stddef.h"		HAVE_STDDEF_H)
 
 CHECK_FUNCTION_EXISTS(drand48		HAVE_DRAND48 )
 CHECK_FUNCTION_EXISTS(rand			HAVE_RAND )
-CHECK_FUNCTION_EXISTS(std::rand		HAVE_STD__RAND )
+# CHECK_FUNCTION_EXISTS(std::rand		HAVE_STD__RAND )
+CHECK_CXX_SOURCE_COMPILES("#include <cstdlib> 
+		int main() {int random_variable = std::rand(); return 0;}" 
+	HAVE_STD__RAND)
+if(HAVE_STD__RAND)
+	message(STATUS "std::rand available!")
+else()
+	message(STATUS "std::rand not available!")
+endif()
 CHECK_FUNCTION_EXISTS(va_copy		HAVE_VA_COPY )
 CHECK_SYMBOL_EXISTS(_snprintf cstdio HAVE__SNPRINTF)
 
@@ -403,6 +411,10 @@ if (ENABLE_SHARED_LIBRARIES)
 else ()
   add_library(${IPOPT_LIB} STATIC ${IPOPT_SRC_LIST} ${ALL_HDRS})
 endif ()
+
+set_target_properties(ipopt PROPERTIES INSTALL_RPATH "${THIRDPARTY_DIR}/bin")
+
+
 if (COIN_COMPILE_LTO)
   set_target_properties(${IPOPT_LIB} PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
 endif ()
@@ -414,6 +426,62 @@ set_include_directories(${IPOPT_LIB})
 add_dependencies(${IPOPT_LIB} ${IPOPT_DEPENDS})
 message(STATUS "Ipopt depends on ${IPOPT_DEPENDS}")
 target_link_libraries(${IPOPT_LIB} ${IPOPT_LAPACK_LIBRARY} ${IPOPT_BLAS_LIBRARY})
+
+#### Always include the CPP examples/Cpp_example/MyNLP
+  set(Cpp_example_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/cpp_example.cpp
+                       ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/MyNLP.cpp)
+
+add_executable(cpp_example ${Cpp_example_SRCS})
+target_link_libraries(cpp_example ${IPOPT_LIB})
+set_target_properties(cpp_example PROPERTIES INSTALL_RPATH "${THIRDPARTY_DIR}/bin")
+
+if(MSVC AND TARGET cpp_example)
+  set_directory_properties(PROPERTIES VS_STARTUP_PROJECT cpp_example)
+endif()
+
+#copy the dll
+add_custom_command(TARGET cpp_example POST_BUILD      
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
+        "${THIRDPARTY_DIR}/bin/openblas.dll"      
+        $<TARGET_FILE_DIR:cpp_example>) 
+
+# if (COIN_COMPILE_LTO)
+# set_target_properties(cpp_example PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
+# endif ()
+# if (COIN_HAS_MUMPS)
+# target_link_libraries(cpp_example dmumps mumps_common seq pthread)
+# endif ()
+# if (MKL_FOUND)
+# target_link_libraries(${Name} ${COIN_MKL_LIBS})
+# else ()
+# if (COIN_HAS_LAPACK OR COIN_ENABLE_DOWNLOAD_LAPACK)
+  # target_link_libraries(cpp_example lapack blas)
+# endif ()
+# if (COIN_ENABLE_DOWNLOAD_CLAPACK)
+  # target_link_libraries(cpp_example f2c)
+# endif ()
+# if (COIN_ENABLE_COMPILE_HSL OR COIN_ENABLE_DOWNLOAD_LAPACK OR COIN_ENABLE_DOWNLOAD_CLAPACK OR COIN_HAS_MUMPS)
+  # target_link_libraries(cpp_example gfortran)
+# endif ()
+# endif ()
+# if (COIN_ENABLE_COMPILE_HSL)
+# target_link_libraries(cpp_example hsl)
+# endif ()
+# if (BUILD_LINEARSOLVERLOADER AND UNIX)
+# target_link_libraries(cpp_example dl)
+# endif ()
+# if (COIN_ENABLE_DOWNLOAD_METIS)
+# target_link_libraries(cpp_example metis)
+# endif ()
+set_include_directories(cpp_example)
+
+add_test(NAME ipopt_example_cpp_example
+	   COMMAND $<TARGET_FILE:cpp_example>)
+set_tests_properties(ipopt_example_cpp_example PROPERTIES TIMEOUT 30)
+set_tests_properties(ipopt_example_cpp_example PROPERTIES PASS_REGULAR_EXPRESSION "EXIT: Optimal Solution Found.")
+
+
+
 
 if (IPOPT_HAS_AMPL)
   set (IPOPT_AMPL_SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/Ipopt/src/Apps/AmplSolver/ampl_ipopt.cpp
@@ -712,45 +780,9 @@ if (IPOPT_BUILD_EXAMPLES)
   set_tests_properties(ipopt_example_luksan_MPara5_2_3 PROPERTIES TIMEOUT 30)
   set_tests_properties(ipopt_example_luksan_MPara5_2_3 PROPERTIES PASS_REGULAR_EXPRESSION "EXIT: Optimal Solution Found.")
 
-  set(Cpp_example_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/cpp_example.cpp
-                       ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/MyNLP.cpp)
+
   
-  add_executable(cpp_example ${Cpp_example_SRCS})
-  target_link_libraries(cpp_example ${IPOPT_LIB})
-  if (COIN_COMPILE_LTO)
-    set_target_properties(cpp_example PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
-  endif ()
-  if (COIN_HAS_MUMPS)
-    target_link_libraries(cpp_example dmumps mumps_common seq pthread)
-  endif ()
-  if (MKL_FOUND)
-    target_link_libraries(${Name} ${COIN_MKL_LIBS})
-  else ()
-    if (COIN_HAS_LAPACK OR COIN_ENABLE_DOWNLOAD_LAPACK)
-      target_link_libraries(cpp_example lapack blas)
-    endif ()
-    if (COIN_ENABLE_DOWNLOAD_CLAPACK)
-      target_link_libraries(cpp_example f2c)
-    endif ()
-    if (COIN_ENABLE_COMPILE_HSL OR COIN_ENABLE_DOWNLOAD_LAPACK OR COIN_ENABLE_DOWNLOAD_CLAPACK OR COIN_HAS_MUMPS)
-      target_link_libraries(cpp_example gfortran)
-    endif ()
-  endif ()
-  if (COIN_ENABLE_COMPILE_HSL)
-    target_link_libraries(cpp_example hsl)
-  endif ()
-  if (BUILD_LINEARSOLVERLOADER AND UNIX)
-    target_link_libraries(cpp_example dl)
-  endif ()
-  if (COIN_ENABLE_DOWNLOAD_METIS)
-    target_link_libraries(cpp_example metis)
-  endif ()
-  set_include_directories(cpp_example)
   
-  add_test(NAME ipopt_example_cpp_example
-           COMMAND $<TARGET_FILE:cpp_example>)
-  set_tests_properties(ipopt_example_cpp_example PROPERTIES TIMEOUT 30)
-  set_tests_properties(ipopt_example_cpp_example PROPERTIES PASS_REGULAR_EXPRESSION "EXIT: Optimal Solution Found.")
 
 
   set(hs071_c_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/hs071_c/hs071_c.c)
@@ -886,7 +918,6 @@ endif ()
 #
 # Install part
 #
-
 
 
 install(FILES ${ALL_HDRS} 

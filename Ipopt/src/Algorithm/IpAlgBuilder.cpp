@@ -3,7 +3,6 @@
 // This code is published under the Eclipse Public License.
 //
 // Authors:  Carl Laird, Andreas Waechter     IBM    2004-09-29
-
 #include "IpoptConfig.h"
 #include "IpAlgBuilder.hpp"
 
@@ -69,6 +68,9 @@
 #ifdef COIN_HAS_MUMPS
 # include "IpMumpsSolverInterface.hpp"
 #endif
+#ifdef HAVE_EIGEN
+# include "IpEigenSimplicialSolverInterface.hpp"
+#endif
 
 #ifdef HAVE_LINEARSOLVERLOADER
 # include "HSLLoader.h"
@@ -92,7 +94,7 @@ void AlgorithmBuilder::RegisterOptions(
    )
 {
    roptions->SetRegisteringCategory("Linear Solver");
-   roptions->AddStringOption9("linear_solver", "Linear solver used for step computations.",
+   roptions->AddStringOption10("linear_solver", "Linear solver used for step computations.",
 #ifdef COINHSL_HAS_MA27
       "ma27",
 #else
@@ -117,7 +119,11 @@ void AlgorithmBuilder::RegisterOptions(
 #       ifdef COINHSL_HAS_MA77
       "ma77",
 #       else
-      "ma27",
+#         ifdef HAVE_EIGEN
+            "eigen_simplicial",
+#          else
+            "eigen_simplicial",
+#         endif
 #       endif
 #      endif
 #     endif
@@ -129,7 +135,7 @@ void AlgorithmBuilder::RegisterOptions(
       "ma27", "use the Harwell routine MA27", "ma57", "use the Harwell routine MA57", "ma77",
       "use the Harwell routine HSL_MA77", "ma86", "use the Harwell routine HSL_MA86", "ma97",
       "use the Harwell routine HSL_MA97", "pardiso", "use the Pardiso package", "wsmp", "use WSMP package", "mumps",
-      "use MUMPS package", "custom", "use custom linear solver",
+      "use MUMPS package", "eigen_simplicial", "Use Eigen simplicial solver", "custom", "use custom linear solver",
       "Determines which linear algebra package is to be used for the "
          "solution of the augmented linear system (for obtaining the search "
          "directions). "
@@ -402,6 +408,16 @@ SmartPtr<SymLinearSolver> AlgorithmBuilder::SymLinearSolverFactory(
 #else
 
       THROW_EXCEPTION(OPTION_INVALID, "Selected linear solver MUMPS not available.");
+#endif
+
+   }
+   else if (linear_solver == "eigen_simplicial")
+   {
+#ifdef HAVE_EIGEN
+   SolverInterface = new EigenSimplicialSolverInterface();
+#else
+
+   THROW_EXCEPTION(OPTION_INVALID, "Selected linear solver Eigen_Simplicial not available.");
 #endif
 
    }

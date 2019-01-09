@@ -25,6 +25,9 @@
 #ifdef COIN_HAS_MUMPS
 # include "IpMumpsSolverInterface.hpp"
 #endif
+#ifdef HAVE_EIGEN
+# include "IpEigenSimplicialSolverInterface.hpp"
+#endif
 #ifdef HAVE_WSMP
 # include "IpWsmpSolverInterface.hpp"
 #endif
@@ -124,9 +127,9 @@ void TNLPAdapter::RegisterOptions(
          "constraints are relaxed (according to\" bound_relax_factor\"). For "
          "both \"make_constraints\" and \"relax_bounds\", bound multipliers are "
          "computed for the fixed variables.");
-   roptions->AddStringOption4("dependency_detector",
+   roptions->AddStringOption5("dependency_detector",
       "Indicates which linear solver should be used to detect linearly dependent equality constraints.", "none", "none",
-      "don't check; no extra work at beginning", "mumps", "use MUMPS", "wsmp", "use WSMP", "ma28", "use MA28",
+      "don't check; no extra work at beginning", "mumps", "use MUMPS", "wsmp", "use WSMP", "ma28", "use MA28", "eigen_simplicial", "use Eigen_simplicial"
       "The default and available choices depend on how Ipopt has been "
          "compiled.  This is experimental and does not work well.");
    roptions->AddStringOption2("dependency_detection_with_rhs",
@@ -234,6 +237,21 @@ bool TNLPAdapter::ProcessOptions(
 
          THROW_EXCEPTION(OPTION_INVALID,
             "Ipopt has not been compiled with MUMPS.  You cannot choose \"mumps\" for \"dependency_detector\".");
+#endif
+
+      }
+      else if (dependency_detector == "eigen_simplicial")
+      {
+#ifdef HAVE_EIGEN
+        SmartPtr<SparseSymLinearSolverInterface> SolverInterface;
+        SolverInterface = new EigenSimplicialSolverInterface();
+        SmartPtr<TSymLinearSolver> ScaledSolver =
+          new TSymLinearSolver(SolverInterface, NULL);
+        dependency_detector_ = new TSymDependencyDetector(*ScaledSolver);
+#else
+
+        THROW_EXCEPTION(OPTION_INVALID,
+          "Ipopt has not been compiled with the Eigen template Library.  You cannot choose \"eigen_simplicial\" for \"dependency_detector\".");
 #endif
 
       }

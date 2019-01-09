@@ -22,6 +22,9 @@
 #ifdef COIN_HAS_MUMPS
 # include "IpMumpsSolverInterface.hpp"
 #endif
+#ifdef HAVE_EIGEN
+# include "IpEigenSimplicialSolverInterface.hpp"
+#endif
 #ifdef HAVE_WSMP
 # include "IpWsmpSolverInterface.hpp"
 # include "IpIterativeWsmpSolverInterface.hpp"
@@ -60,6 +63,11 @@ void RegisterOptions_LinearSolvers(
 #ifdef COIN_HAS_MUMPS
    roptions->SetRegisteringCategory("Mumps Linear Solver");
    MumpsSolverInterface::RegisterOptions(roptions);
+#endif
+
+#ifdef HAVE_EIGEN
+   roptions->SetRegisteringCategory("Eigen Simplicial Linear Solver");
+   EigenSimplicialSolverInterface::RegisterOptions(roptions);
 #endif
 
 #if defined(HAVE_PARDISO) || defined(HAVE_LINEARSOLVERLOADER)

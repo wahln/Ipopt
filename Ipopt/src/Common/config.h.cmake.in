@@ -24,6 +24,9 @@
 /* If defined, the MUMPS library is available. */
 /* #undef COIN_HAS_MUMPS */
 
+/* If defined, the Eigen template Library is available. */
+#define HAVE_EIGEN
+
 /* Define to 1 if the linear solver loader should be compiled to allow dynamic
    loading of shared libraries with linear solvers */
 /* #undef HAVE_LINEARSOLVERLOADER */
