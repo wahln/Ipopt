@@ -101,8 +101,15 @@ if(IPOPT_HAS_EIGEN)
   if(DEFINED Eigen_DIR AND NOT EXISTS ${Eigen_DIR})
     message(FATAL_ERROR "Eigen_DIR variable is defined but corresponds to non-existing directory")
   endif()
+  
+  set(Eigen_CHECK_FILE "${Eigen_DIR}/signature_of_eigen3_matrix_library")
 
-  if(NOT DEFINED Eigen_DIR)
+  if(NOT DEFINED Eigen_DIR OR NOT EXISTS "${Eigen_CHECK_FILE}")
+  
+	if (DEFINED Eigen_DIR)
+		message(AUTHOR_WARNING "Eigen_DIR was given as ${Eigen_DIR}, but does not seem to contain a valid Eigen3 source (checked through existence of ${Eigen_CHECK_FILE}). Eigen3 will be downloaded!")
+	endif()
+		
 
     ExternalProject_Add(Eigen
       LIST_SEPARATOR ${sep}

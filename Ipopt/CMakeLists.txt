@@ -113,7 +113,6 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Common/config.h.cmake.in       ${CMAKE_BINARY_DIR}/Ipopt/include/config.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Common/config_ipopt.h.cmake.in ${CMAKE_BINARY_DIR}/Ipopt/include/config_ipopt.h)
 
-add_compile_definitions(HAVE_CONFIG_H=1)
 
 set (IPOPT_SRC_ALGORITHM_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpAdaptiveMuUpdate.cpp
                               ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpAlgBuilder.cpp
@@ -412,7 +411,11 @@ else ()
   add_library(${IPOPT_LIB} STATIC ${IPOPT_SRC_LIST} ${ALL_HDRS})
 endif ()
 
-set_target_properties(ipopt PROPERTIES INSTALL_RPATH "${THIRDPARTY_DIR}/bin")
+target_compile_definitions(${IPOPT_LIB} PUBLIC "HAVE_CONFIG_H=1")
+set_target_properties(${IPOPT_LIB} PROPERTIES INSTALL_RPATH "${THIRDPARTY_DIR}/bin")
+set_target_properties(${IPOPT_LIB} PROPERTIES COMPILE_FLAGS "/GL")
+set_target_properties(${IPOPT_LIB} PROPERTIES LINK_FLAGS "/LTGC")
+#set_target_properties(${IPOPT_LIB} PROPERTIES INTERPROCEDURAL_OPTIMIZATION True)
 
 
 if (COIN_COMPILE_LTO)
