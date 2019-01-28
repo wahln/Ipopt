@@ -13,10 +13,10 @@
 /* #undef COIN_HAS_ASL */
 
 /* If defined, the BLAS Library is available. */
-/* #undef COIN_HAS_BLAS */
+#cmakedefine COIN_HAS_BLAS
 
 /* If defined, the LAPACK Library is available. */
-/* #undef COIN_HAS_LAPACK */
+#cmakedefine COIN_HAS_LAPACK
 
 /* If defined, the HSL library is available. */
 /* undef COIN_HAS_HSL */

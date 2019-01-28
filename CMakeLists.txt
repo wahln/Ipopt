@@ -46,6 +46,9 @@ if(IPOPT_USE_CLAPACK)
 	mark_as_advanced(IPOPT_LAPACK_LIBRARY)
 	
 	list(APPEND IPOPT_DEPENDS CLAPACK)	
+	
+	set(COIN_HAS_LAPACK 1)
+	set(COIN_HAS_BLAS 1)
 else()
 	message(FATAL_ERROR "This version requires CLAPACK")
 endif()
