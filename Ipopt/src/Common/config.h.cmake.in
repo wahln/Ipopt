@@ -50,6 +50,8 @@
    libraries. */
 #cmakedefine F77_DUMMY_MAIN 
 
+#cmakedefine COIN_USE_F2C
+
 #ifndef COIN_USE_F2C
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */

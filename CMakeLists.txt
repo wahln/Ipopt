@@ -4,7 +4,7 @@ project(IpOpt)
 
 
 option(IPOPT_HAS_EIGEN			   	   	"Enable Eigen solvers"  ON)
-option(IPOPT_USE_OPENBLAS			   	"Use OpenBLAS instead of reference BLAS" ON)
+option(IPOPT_USE_OPENBLAS			   	"Use OpenBLAS instead of reference BLAS" OFF)
 option(IPOPT_HAS_MUMPS					"Enable MUMPS solver"	OFF)
 option(IPOPT_USE_CLAPACK				"Use CLAPACK" ON)
 
@@ -22,8 +22,34 @@ set(IPOPT_DEPENDS )
 # set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs with openBLAS")
 
 
+if(IPOPT_USE_CLAPACK)
+	if(DEFINED CLAPACK_DIR AND NOT EXISTS ${CLAPACK_DIR})
+		message(FATAL_ERROR "CLAPACK_DIR variable is defined but corresponds to non-existing directory")
+	endif()
+	
+	if(NOT DEFINED CLAPACK_DIR)
+		ExternalProject_Add(CLAPACK
+			LIST_SEPARATOR ${sep}
+			URL http://icl.cs.utk.edu/lapack-for-windows/clapack/clapack-3.2.1-CMAKE.tgz
+			URL_MD5 EE4947C1FE86D4114F2559003711027A
+			PREFIX ${THIRDPARTY_DIR}/
+			CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+			)
+	else()
+	
+	endif()
+	
+	ExternalProject_Get_Property(CLAPACK INSTALL_DIR)
+	message(STATUS "CLAPACK Install dir: ${INSTALL_DIR}")
+	
+	set(IPOPT_LAPACK_LIBRARY ${THIRDPARTY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}lapack${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE FILEPATH "Path to static lapack library")
+	mark_as_advanced(IPOPT_LAPACK_LIBRARY)
+	
+	list(APPEND IPOPT_DEPENDS CLAPACK)	
+else()
+	message(FATAL_ERROR "This version requires CLAPACK")
+endif()
 
-# Sanity checks
 if(IPOPT_USE_OPENBLAS)
 	if(DEFINED OpenBLAS_DIR AND NOT EXISTS ${OpenBLAS_DIR})
 		message(FATAL_ERROR "OpenBLAS_DIR variable is defined but corresponds to non-existing directory")
@@ -64,34 +90,21 @@ if(IPOPT_USE_OPENBLAS)
   
   	set(IPOPT_BLAS_LIBRARY ${THIRDPARTY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}openblas${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE FILEPATH "Path to static blas library")
 	mark_as_advanced(IPOPT_BLAS_LIBRARY)
+	
+	set(Eigen_DEPENDS OpenBlas)
+	set(Eigen_BLASTYPE openblas)
+	set(IPOPT_CALL_F77_FUNC "NAME")
+	set(COIN_USE_F2C 0)
+else()
+	set(OpenBLAS_DIR )
+	set(IPOPT_BLAS_LIBRARY ${THIRDPARTY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}blas${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE FILEPATH "Path to static blas library")
+	set(Eigen_DEPENDS CLAPACK)
+	set(Eigen_BLASTYPE refblas)
+	set(COIN_USE_F2C 1)
 endif()
 
-if(IPOPT_USE_CLAPACK)
-	if(DEFINED CLAPACK_DIR AND NOT EXISTS ${CLAPACK_DIR})
-		message(FATAL_ERROR "CLAPACK_DIR variable is defined but corresponds to non-existing directory")
-	endif()
-	
-	if(NOT DEFINED CLAPACK_DIR)
-		ExternalProject_Add(CLAPACK
-			LIST_SEPARATOR ${sep}
-			URL http://icl.cs.utk.edu/lapack-for-windows/clapack/clapack-3.2.1-CMAKE.tgz
-			URL_MD5 EE4947C1FE86D4114F2559003711027A
-			PREFIX ${THIRDPARTY_DIR}/
-			CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-			)
-	else()
-	
-	endif()
-	
-	ExternalProject_Get_Property(CLAPACK INSTALL_DIR)
-	message(STATUS "CLAPACK Install dir: ${INSTALL_DIR}")
-	
-	set(IPOPT_LAPACK_LIBRARY ${THIRDPARTY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}lapack${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE FILEPATH "Path to static lapack library")
-	mark_as_advanced(IPOPT_LAPACK_LIBRARY)
-	
-	list(APPEND IPOPT_DEPENDS CLAPACK)
-	
-endif()
+# mark_as_advanced(IPOPT_CALL_F77_FUNC IPOPT_CALL_F77_FUNC_)
+
 #-----------------------------------------------------------------------------
 # Eigen
 #-----------------------------------------------------------------------------
@@ -124,11 +137,11 @@ if(IPOPT_HAS_EIGEN)
         -DEIGEN_BUILD_PKGCONFIG:BOOL=OFF
       CMAKE_CACHE_ARGS
 	  	-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-		-DBLAS_openblas_LIBRARY:FILEPATH=${IPOPT_BLAS_LIBRARY}
+		-DBLAS_${Eigen_BLASTYPE}_LIBRARY:FILEPATH=${IPOPT_BLAS_LIBRARY}
  #       ${ep_common_cache_args}
 #      CMAKE_CACHE_DEFAULT_ARGS
  #       ${ep_common_cache_default_args}
-	  DEPENDS OpenBLAS
+	  DEPENDS ${Eigen_DEPENDS}
     )
 	ExternalProject_Get_Property(Eigen SOURCE_DIR)
 	# message("Source dir of Eigen: ${SOURCE_DIR}")
@@ -153,7 +166,7 @@ if(IPOPT_HAS_EIGEN)
  #       ${ep_common_cache_args}
 #      CMAKE_CACHE_DEFAULT_ARGS
  #       ${ep_common_cache_default_args}
-	  DEPENDS OpenBLAS
+	  DEPENDS ${Eigen_DEPENDS}
     )
 
   endif()

@@ -335,7 +335,10 @@ set(COMMON_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpCachedResults.hpp
 		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTaggedObject.hpp
 		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTimedTask.hpp
 		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpTypes.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpUtils.hpp)
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpUtils.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/IpoptConfig.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/Common/config_ipopt_default.h
+		)
 
 set(ALGORITHMS_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptCalculatedQuantities.hpp
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Algorithm/IpIpoptData.hpp
@@ -413,8 +416,8 @@ endif ()
 
 target_compile_definitions(${IPOPT_LIB} PUBLIC "HAVE_CONFIG_H=1")
 set_target_properties(${IPOPT_LIB} PROPERTIES INSTALL_RPATH "${THIRDPARTY_DIR}/bin")
-set_target_properties(${IPOPT_LIB} PROPERTIES COMPILE_FLAGS "/GL")
-set_target_properties(${IPOPT_LIB} PROPERTIES LINK_FLAGS "/LTGC")
+#set_target_properties(${IPOPT_LIB} PROPERTIES COMPILE_FLAGS "/GL")
+#set_target_properties(${IPOPT_LIB} PROPERTIES LINK_FLAGS "/LTGC")
 #set_target_properties(${IPOPT_LIB} PROPERTIES INTERPROCEDURAL_OPTIMIZATION True)
 
 
@@ -443,11 +446,12 @@ if(MSVC AND TARGET cpp_example)
 endif()
 
 #copy the dll
+if(IPOPT_USE_OPENBLAS)
 add_custom_command(TARGET cpp_example POST_BUILD      
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
         "${THIRDPARTY_DIR}/bin/openblas.dll"      
         $<TARGET_FILE_DIR:cpp_example>) 
-
+endif()
 # if (COIN_COMPILE_LTO)
 # set_target_properties(cpp_example PROPERTIES INTERPROCEDURAL_OPTIMIZATION true)
 # endif ()
