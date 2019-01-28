@@ -431,7 +431,7 @@ set_include_directories(${IPOPT_LIB})
 
 add_dependencies(${IPOPT_LIB} ${IPOPT_DEPENDS})
 message(STATUS "Ipopt depends on ${IPOPT_DEPENDS}")
-target_link_libraries(${IPOPT_LIB} ${IPOPT_LAPACK_LIBRARY} ${IPOPT_BLAS_LIBRARY})
+target_link_libraries(${IPOPT_LIB} ${IPOPT_LAPACK_LIBRARY} ${IPOPT_BLAS_LIBRARY} ${IPOPT_F2C_LIBRARY})
 
 #### Always include the CPP examples/Cpp_example/MyNLP
   set(Cpp_example_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/Cpp_example/cpp_example.cpp
